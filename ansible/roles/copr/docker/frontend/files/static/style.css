@@ -1,0 +1,10 @@
+a, a:active {text-decoration: none;color: blue;}
+a:visited {color: #48468F;}
+a:hover, a:focus {text-decoration: underline;color: red;}
+body {margin: 10px 10px;padding: 0px;background-color: #F5F5F5;background: url("/bg.png") repeat-x scroll 0 0 rgba(0,0,0,0);}
+h2 {margin-bottom: 12px;}
+pre {margin: 12px 15px;}
+pre a {font: 100% monospace;text-align: left;display: inline-block;padding-bottom: 1px;}
+pre a[href^="?"] {display: inline-block;padding-bottom: 6px;color: black;}
+div.list {background-color: rgba(200,200,200,0.1);border-top: 1px solid #646464;border-bottom: 1px solid #646464;}
+div.foot {font: 80% monospace;color: #787878;margin: 0 -10px;padding: 4px 10px;height: 150px;background: url("/bottom.png") repeat-x scroll left bottom rgba(0,0,0,0);}

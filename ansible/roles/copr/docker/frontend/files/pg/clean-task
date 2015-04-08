@@ -1,0 +1,18 @@
+#!/bin/bash
+# author: mosquito <sensor.wen@gmail.com>
+
+CMD='psql coprdb -t -A -c'
+TIMEOUT="21600"
+NOW=$(date +%s)
+LINE_NUM=$($CMD "select id from build where ended_on is null;"|wc -l)
+
+for i in $(seq 1 $LINE_NUM); do
+    ID[$i]=$($CMD "select id from build where ended_on is null limit 1 offset $((i-1));")
+    START[$i]=$($CMD "select started_on from build where ended_on is null limit 1 offset $((i-1));")
+
+    RESULT=$(( $NOW - ${START[$i]} ))
+    if [ "$RESULT" -gt "$TIMEOUT" ]; then
+        $CMD "update build_chroot set status=0 where status=3 and build_id=${ID[$i]};"
+        $CMD "update build set ended_on=$NOW where id=${ID[$i]};"
+    fi
+done

@@ -1,0 +1,7 @@
+[mosquito-copr]
+name=Copr repo for copr owned by mosquito
+baseurl=https://copr-be.cloud.fedoraproject.org/results/mosquito/copr/fedora-$releasever-$basearch/
+skip_if_unavailable=True
+gpgcheck=0
+gpgkey=https://copr-be.cloud.fedoraproject.org/results/mosquito/copr/pubkey.gpg
+enabled=1

@@ -1,0 +1,47 @@
+- name: copy httpd ssl certificates (crt)
+  copy: src="certs/{{ item }}" dest="/etc/pki/tls/certs/" owner=root group=root mode=0600
+  with_items:
+  - copr.fdzh.org.crt
+  - copr-be.fdzh.org.crt
+  tags:
+  - config
+
+- name: copy httpd ssl certificates (key)
+  copy: src="certs/{{ item }}" dest="/etc/pki/tls/private/" owner=root group=root mode=0600
+  with_items:
+  - copr.fdzh.org.key
+  - copr-be.fdzh.org.key
+  tags:
+  - config
+
+- name: copy httpd ssl certificates (CAcert)
+  copy: src="certs/{{ item }}" dest="/etc/pki/tls/certs/" owner=root group=root mode=0600
+  with_items:
+  - ComodoCA.crt
+  - WosignCA.crt
+  tags:
+  - config
+
+- lineinfile: dest=/etc/httpd/conf.d/10_copr-fe_ssl.conf regexp="SSLCertificateFile " insertafter="^#SSLCertificateFile " line="SSLCertificateFile /etc/pki/tls/certs/copr.fdzh.org.crt"
+  notify:
+  - restart httpd
+
+- lineinfile: dest=/etc/httpd/conf.d/10_copr-fe_ssl.conf regexp="SSLCertificateKeyFile " insertafter="^#SSLCertificateKeyFile " line="SSLCertificateKeyFile /etc/pki/tls/private/copr.fdzh.org.key"
+  notify:
+  - restart httpd
+
+- lineinfile: dest=/etc/httpd/conf.d/10_copr-fe_ssl.conf regexp="SSLCertificateChainFile " insertafter="SSLCertificateKeyFile " line="SSLCertificateChainFile /etc/pki/tls/certs/ComodoCA.crt"
+  notify:
+  - restart httpd
+
+- lineinfile: dest=/etc/httpd/conf.d/20_copr-be_ssl.conf regexp="SSLCertificateFile " insertafter="^#SSLCertificateFile " line="SSLCertificateFile /etc/pki/tls/certs/copr-be.fdzh.org.crt"
+  notify:
+  - restart httpd
+
+- lineinfile: dest=/etc/httpd/conf.d/20_copr-be_ssl.conf regexp="SSLCertificateKeyFile " insertafter="^#SSLCertificateKeyFile " line="SSLCertificateKeyFile /etc/pki/tls/private/copr-be.fdzh.org.key"
+  notify:
+  - restart httpd
+
+- lineinfile: dest=/etc/httpd/conf.d/20_copr-be_ssl.conf regexp="SSLCertificateChainFile " insertafter="SSLCertificateKeyFile " line="SSLCertificateChainFile /etc/pki/tls/certs/WosignCA.crt"
+  notify:
+  - restart httpd

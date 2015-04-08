@@ -1,0 +1,19 @@
+---
+- name: install postfix
+  action: yum state=present pkg=postfix
+  tags:
+  - postfix
+
+- name: /etc/postfix/main.cf
+  action: copy src={{ item }} dest=/etc/postfix/main.cf
+  with_first_found:
+  - postfix_main.cf
+  notify:
+  - restart postfix
+  tags:
+  - postfix
+
+- name: enable postfix to start
+  action: service name=postfix state=running enabled=true
+  tags:
+  - service

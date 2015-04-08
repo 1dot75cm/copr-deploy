@@ -1,0 +1,12 @@
+- name: provision copr-frontend instance
+  hosts: web
+  user: root
+  gather_facts: false
+
+  vars_files:
+   - "/mnt/copr-deploy/ansible/vars/global.yml"
+
+  # Roles are run first, before tasks, regardless of where you place them here.
+  roles:
+  - base
+  - copr/docker/frontend

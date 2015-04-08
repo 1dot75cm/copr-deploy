@@ -1,0 +1,58 @@
+---
+- name: change jquery library
+  command: sed -i -e '/jquery/s|ajax.*libs|cdn-bootcss-com.b0.upaiyun.com|' -e '/smooth/s|themes/smoothness/||' /usr/share/copr/coprs_frontend/coprs/templates/layout.html
+
+#- name: comment jquery
+#  command: sed -i -e '/jquery.min.js/i<!--' -e '/jquery-ui.css/a-->' /usr/share/copr/coprs_frontend/coprs/templates/layout.html
+
+#- name: download jquery library
+#  command: wget -q {{item}} -P /usr/share/copr/coprs_frontend/coprs/static/
+#  with_items:
+#  - http://cdn.bootcss.com/jquery/1.11.0/jquery.min.js
+#  - http://cdn.bootcss.com/jqueryui/1.11.0/jquery-ui.min.js
+#  - http://cdn.bootcss.com/jqueryui/1.11.0/jquery-ui.css
+
+#- name: change jquery library
+#  shell: sed -i '/{{item}}/s|//.*.{{item}}|\{\{ url_for("static", filename="{{item}}") \}\}|' /usr/share/copr/coprs_frontend/coprs/templates/layout.html
+#  with_items:
+#  - jquery.min.js
+#  - jquery-ui.min.js
+#  - jquery-ui.css
+
+- name: add footer information
+  command: sed -i '/Copr frontend/a<br>\n    Powered by\n    <a href="http://www.ucloud.cn/?ref=fdzh.org" target="_blank" style="border:0;margin:0;padding:0" data-original-title="服务器由 UCloud 赞助">\n      <img src="http://www.ucloud.cn/www/img/www/logo.png" alt="UCloud" style="height:16px;vertical-align:bottom">\n    </a>' /usr/share/copr/coprs_frontend/coprs/templates/layout.html
+# sed -i '/Copr frontend/a<br>\n    Copyright © 2015 <a href="http://fdzh.org" target="_blank" style="border:0;margin:0;padding:0">fedora 中文社区</a><br>\n    Powered by\n    <a href="http://www.ucloud.cn/?ref=fdzh.org" target="_blank" style="border:0;margin:0;padding:0" data-original-title="服务器由 UCloud 赞助">\n      <img src="http://www.ucloud.cn/www/img/www/logo.png" alt="UCloud" style="height:16px;vertical-align:bottom">\n    </a>' /usr/share/copr/coprs_frontend/coprs/templates/layout.html
+
+- name: change title
+  command: sed -i -e 's|Coprs Build System|Fedora Copr 构建系统 - Build Once, Run Anywhere.|' \
+-e '/title/a  <meta name="description" content="Copr 提供免费易用的自动构建服务。只需选择系统/架构并提供 srpm 链接，其它交给 Copr 即可! https://copr.fdzh.org" />\n  <meta name="keywords" content="打包,编译,fedora copr,copr,fedora 打包,fedora 编译,fedora 中文社区" />' \
+/usr/share/copr/coprs_frontend/coprs/templates/layout.html
+
+- name: change FAQ
+  command: sed -i '/FAQ/s|//.*"|//github.com/FZUG/Copr/wiki/FAQ"|' /usr/share/copr/coprs_frontend/coprs/templates/layout.html
+
+- name: google analytics
+  command: sed -i '/\body/i  <script>\n  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){\n  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),\n  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)\n  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');\n\n  ga('create', 'UA-47480129-8', 'auto');\n  ga('send', 'pageview');\n</script>' /usr/share/copr/coprs_frontend/coprs/templates/layout.html
+
+- name: change api url
+  command: sed -i 's|fedoraproject|fdzh|' /usr/share/copr/coprs_frontend/coprs/templates/api.html
+
+- name: change show info
+  command: sed -i -e '/easy-to-use/,/Copr wiki/d' -e '/about-copr/a<p>Copr 提供免费易用的自动构建服务。只需选择系统/架构并提供 srpm 链接，其它交给 Copr 即可！\n            <a href="https://github.com/FZUG/Copr">更多...</a></p>' /usr/share/copr/coprs_frontend/coprs/templates/coprs/show.html
+
+- name: download fork me
+  command: wget -q https://camo.githubusercontent.com/c6625ac1f3ee0a12250227cf83ce904423abf351/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f6c6566745f677261795f3664366436642e706e67 -O /usr/share/copr/coprs_frontend/coprs/static/forkme_left_gray_6d6d6d.png
+
+- name: Fork me on Github
+  command: sed -i '/\/body/i<a href="https://github.com/FZUG/Copr"><img style="position:absolute;top:0;left:0;border:0;" src="\{\{ url_for('static', filename='forkme_left_gray_6d6d6d.png') \}\}" alt="Fork me on GitHub" data-canonical-src="//fdorg.qiniudn.com/forkme_left_gray_6d6d6d.png"></a>' /usr/share/copr/coprs_frontend/coprs/templates/layout.html
+
+- name: Legal flag email
+  command: sed -i -e '/import os/i#encoding:utf-8\nimport sys\nreload(sys)\nsys.setdefaultencoding("utf8")\n' \
+-e '/navigate_to/s|Navigate to http|\\n管理页面: https|' \
+-e '/contact/s|Contact on owner is|需交涉用户|' \
+-e '/reported_by/s|Reported by|汇报人:|' \
+-e '/Subject/s|Legal flag raised on {0}|!Legal! {0} 源被提出法律风险|' \
+/usr/share/copr/coprs_frontend/coprs/views/coprs_ns/coprs_general.py
+
+- name: graphite
+  command: sed -i '/\/head/i<style>\n.aligned img{display:none;}\n.aligned:hover img{display:block;float:right;}\n</style>' /usr/share/copr/coprs_frontend/coprs/templates/layout.html; sed -i '/Chroots/i<img src="http://copr.qinghuai.org:8080/render?target=alias(averageSeries(build.cpu-*.cpu-user),%22cpu-user%22)&target=alias(averageSeries(build.cpu-*.cpu-system),%22cpu-system%22)&target=alias(averageSeries(build.cpu-*.cpu-idle),%22cpu-idle%22)&title=CPU Usage&from=-50min&width=350"></img>' /usr/share/copr/coprs_frontend/coprs/templates/coprs/detail/build.html

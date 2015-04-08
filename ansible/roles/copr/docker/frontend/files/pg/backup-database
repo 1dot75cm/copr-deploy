@@ -1,0 +1,11 @@
+#!/bin/bash
+# author: mosquito <sensor.wen@gmail.com>
+# Backup a database *locally* to /backups/.
+
+DB=$1
+
+# Make our latest backup
+/usr/bin/pg_dump -C $DB | /usr/bin/xz > /var/lib/pgsql/backups/$DB-$(date +%F).dump.xz
+
+# Also, delete the backup from a few days ago.
+rm -f /var/lib/pgsql/backups/$DB-$(date --date="3 days ago" +%F).dump.xz

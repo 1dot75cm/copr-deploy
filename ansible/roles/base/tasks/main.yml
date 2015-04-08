@@ -1,0 +1,31 @@
+---
+# tasklist for setting up copr
+# This is the base set of files needed for copr
+
+- name: copy .forward file
+  copy: src="forward" dest="/root/.forward" owner=root group=root
+
+- name: install common copr packages
+  yum: state=present pkg={{ item }}
+  with_items:
+#  - "copr-selinux"
+#  - "fail2ban"
+  - "system-config-firewall-base"
+#  - "nrpe"
+  tags:
+  - packages
+
+- name: install dev helper packages
+  yum: state=present pkg={{ item }}
+  with_items:
+  - "bash-completion"
+  - "screen"
+  - "tmux"
+  - "vim"
+  - "elinks"
+  - "ansible-lint"
+  tags:
+  - packages
+
+- name: install copr repo
+  copy: src="yum/copr.repo" dest="/etc/yum.repos.d/copr.repo"

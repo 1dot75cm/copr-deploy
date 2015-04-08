@@ -1,0 +1,30 @@
+---
+basedir: /mnt/copr-deploy/ansible
+roles: /mnt/copr-deploy/ansible/roles
+handlers: /mnt/copr-deploy/ansible/handlers
+vars_path: /mnt/copr-deploy/ansible/vars
+dist_tag: unknown
+
+copr_backend_password: redhat
+spawn_in_advance: true
+copr_secret_key:
+copr_database_uri: postgresql+psycopg2://copr-fe:coprpass@/coprdb
+copr_frontend_public_hostname: copr.fdzh.org
+dbs_to_backup: coprdb
+builder_ip: 10.10.31.132
+web_ip: 10.10.17.156
+web_port: 1984
+keygen_host:
+
+# Set a default hostname base to transient. Override in host vars or command line.
+hostbase: transient
+# root_auth_users for cloud instances is '' by default
+root_auth_users: ""
+global_pkgs_inst: ['bind-utils', 'mailx', 'nc', 'openssh-clients', 
+                   'patch', 'postfix', 'rsync', 'strace',
+                   'tmpwatch', 'traceroute', 'vim-enhanced', 'xz', 'zsh',
+                   'libselinux-python', 'ntpdate', 'bash-completion', 'telnet',
+                   'htop' ]
+
+# sudo: False by default so ansible doesn't try and check for it and hang
+sudo: False

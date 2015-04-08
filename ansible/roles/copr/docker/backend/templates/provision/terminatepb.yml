@@ -1,0 +1,22 @@
+---
+- name: terminate instance
+  hosts: {{ builder_ip }}
+  user: root
+  gather_facts: False
+  vars:
+  - Build_ip: {{ builder_ip }}
+  - Web_ip: {{ web_ip }}
+  - Web_port: {{ web_port }}
+
+{% raw %}
+  tasks:
+  - name: builder ip address
+    shell: docker exec {{copr_task.vm_name}} ifconfig | awk '/inet /{print $2;exit}'
+    register: vm_ip
+
+  - name: terminate it
+    shell: docker stop -t 2 {{copr_task.vm_name}} && docker rm {{copr_task.vm_name}}
+
+  - name: delete web route
+    shell: ssh copr@{{Web_ip}} -p {{Web_port}} "sudo route del -host {{ vm_ip.stdout }} gw {{ Build_ip }}"
+{% endraw %}

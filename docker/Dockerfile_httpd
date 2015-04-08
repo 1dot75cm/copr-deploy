@@ -1,0 +1,10 @@
+FROM systemd:unpriv
+MAINTAINER mosquito <sensor.wen@gmail.com>
+RUN yum install -y httpd; yum clean all; systemctl enable httpd
+RUN sed -i -e '/PrivateTmp/s|true|false|' \
+    -e '/PrivateTmp/aPIDFile=/var/run/httpd/httpd.pid' \
+    /lib/systemd/system/httpd.service
+EXPOSE 80 443
+VOLUME ["/sys/fs/cgroup"]
+VOLUME ["/run"]
+CMD ["/usr/lib/systemd/systemd"]

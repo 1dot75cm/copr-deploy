@@ -1,0 +1,3 @@
+---
+- include: "/mnt/copr-deploy/ansible/playbooks/copr-docker_backend.yml"
+- include: "/mnt/copr-deploy/ansible/playbooks/copr-docker_frontend.yml"

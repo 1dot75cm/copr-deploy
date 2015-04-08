@@ -1,0 +1,121 @@
+---
+- name: add packages for copr backend
+  yum: state=present name={{ item }} enablerepo="updates-testing"
+  with_items:
+  - copr-backend
+#  - obs-signd
+  - redis
+
+# TODO: .service in copr-backend should depend on redis
+- name: enable and start redis
+  service: name=redis enabled=yes state=started
+
+- name: make copr dirs
+  file: state=directory path={{ item }} owner=copr group=copr mode=0755
+  with_items:
+  - /var/lib/copr/jobs
+  - /var/lib/copr/public_html/results
+
+- name: Umask results
+  command: /usr/bin/umask 0000 chdir=/var/lib/copr/public_html/results
+
+- name: setup dirs there
+  file: state=directory path="/home/copr/{{ item }}" owner=copr group=copr mode=0700
+  with_items:
+  - cloud
+  - provision
+  - .ssh
+
+- name: setup privkey for copr user
+  copy: src="provision/files/buildsys.priv" dest=/home/copr/.ssh/id_rsa owner=copr group=copr mode=600
+
+- name: setup pubkey for copr user
+  copy: src="provision/files/buildsys.pub" dest=/home/copr/.ssh/id_rsa.pub owner=copr group=copr mode=600
+
+- name: setup copr user ssh config file
+  copy: src="ssh_config" dest=/home/copr/.ssh/config owner=copr group=copr mode=600
+
+- name: create empty known_hosts
+  file: state=touch dest=/home/copr/.ssh/known_hosts owner=copr group=copr mode=600
+
+- name: replace bashrc for copr user
+  copy: src="copr_bashrc" dest=/home/copr/.bashrc owner=copr group=copr mode=600
+
+- name: auth_key so we can login to localhost as the copr user from the copr user
+  authorized_key: user=copr key="{{ item }}"
+  no_log: True
+  with_file:
+  - "provision/files/buildsys.pub"
+
+# setup dirs for the ansible execution off of provisioning
+- name: dirs from provision
+  file: state=directory path="/home/copr/provision/{{ item }}" owner=copr group=copr
+  with_items:
+  - action_plugins
+  - library
+  - files
+  - files/mock
+  tags:
+  - provision_config
+
+- name: put ansible.cfg for all this into /etc/ansible/ on the system
+  copy: src="provision/ansible.cfg" dest=/etc/ansible/ansible.cfg
+  tags:
+  - provision_config
+
+- name: put some files into the provision subdir
+  template: src=provision/{{ item }} dest=/home/copr/provision/{{ item }} owner=copr group=copr mode=644
+  with_items:
+  - inventory
+  - builderpb.yml
+  - terminatepb.yml
+  tags:
+  - provision_config
+
+- name: put provisioning files
+  synchronize: src=provision/files dest=/home/copr/provision/
+  tags:
+  - provision_config
+
+- name: fix user home dir
+  command: chown -R copr:copr /home/copr
+
+- name: fix webroot
+  command: chown -R copr:copr /var/lib/copr/public_html
+
+- name: testing fixture
+  file: path="/home/copr/cloud/ec2rc.variable" state="touch"
+
+- name: copy copr-be.conf
+  template: src="copr-be.conf" dest=/etc/copr/copr-be.conf owner=root group=copr mode=640
+  notify:
+  - restart copr-backend
+  tags:
+  - config
+
+- name: enable and run copr-backend
+  service: name="copr-backend" enabled=yes state=running
+
+#- name: copy sign.conf
+#  template: src=sign.conf dest=/etc/sign.conf owner=root group=copr mode=640
+#  tags:
+#  - config
+
+#- name: copy delete-forgotten-instances.pl
+#  copy: src="delete-forgotten-instances.pl" dest=/home/copr/delete-forgotten-instances.pl mode=755
+
+#- name: copy delete-forgotten-instances.cron
+#  copy: src="delete-forgotten-instances.cron" dest=/etc/cron.daily/delete-forgotten-instances owner=root group=root mode=755
+#  when: not devel
+
+#- name: install script to kill VMs in error state
+#  copy: src="instant-instance-killer.sh" dest="/root/"
+
+#- cron: name="kill VMs in error state" minute="*/15" job="/root/instant-instance-killer.sh"
+#  when: not devel
+
+#- name: setup monitoring
+#  include: "monitoring.yml"
+
+#- name: set acl for logstash to access httpd logs
+#  acl: name=/var/log/lighttpd entity=logstash etype=user permissions=rx state=present

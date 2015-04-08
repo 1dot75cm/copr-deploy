@@ -1,0 +1,8 @@
+FROM systemd:unpriv
+MAINTAINER mosquito <sensor.wen@gmail.com>
+RUN yum install -y postgresql-server postgresql-contrib; yum clean all; systemctl enable postgresql
+RUN sed -i '/OOMScoreAdjust/s/^/#/' /lib/systemd/system/postgresql.service
+#EXPOSE 5432
+VOLUME ["/sys/fs/cgroup"]
+VOLUME ["/run"]
+CMD ["/usr/lib/systemd/systemd"]
