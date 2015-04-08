@@ -3,7 +3,7 @@ Deploy your Copr build service
 
 ## Copr 架构
 
-[arch]()
+![arch](https://raw.githubusercontent.com/1dot75cm/copr-deploy/master/snapshot/copr_arch.png)
 
 ## 文件说明
 
