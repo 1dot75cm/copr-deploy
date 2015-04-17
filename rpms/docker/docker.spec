@@ -13,7 +13,7 @@
 %global import_path %{provider}.%{provider_tld}/%{project}/%{repo}
 
 # docker stuff (prefix with d_)
-%global d_commit b9be50b578f86e858113b9c334e1748e15b63263
+%global d_commit 5e40de92864009e7385300af1dd0a83bb4693126
 %global d_shortcommit %(c=%{d_commit}; echo ${c:0:7})
 
 %global tar_import_path code.google.com/p/go/src/pkg/archive/tar
@@ -44,7 +44,7 @@ Name: %{repo}
 %else
 Name: %{repo}-io
 %endif
-Version: 1.6.0.rc3
+Version: 1.6.0
 Release: 1.git%{d_shortcommit}%{?dist}
 Summary: Automates deployment of containerized applications
 License: ASL 2.0
@@ -511,6 +511,9 @@ fi
 %{_datadir}/zsh/site-functions/_%{repo}
 
 %changelog
+* Fri Apr 17 2015 mosquito <sensor.wen@gmail.com> - 1.6.0-1.git5e40de9
+- built commit#5e40de9
+
 * Thu Apr  2 2015 mosquito <sensor.wen@gmail.com> - 1.6.0.rc3-1.gitb9be50b
 - built commit#b9be50b
 
