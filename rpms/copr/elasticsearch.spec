@@ -1,7 +1,7 @@
 %global debug_package %{nil}
 
 Name:           elasticsearch
-Version:        1.5.1
+Version:        1.5.2
 Release:        1%{?dist}
 Summary:        Search & Analyze in Real Time
 
@@ -194,6 +194,9 @@ fi
 %{_var}/log/%{name}
 
 %changelog
+* Wed Apr 29 2015 mosquito <sensor.wen@gmail.com> - 1.5.2-1
+- update version to 1.5.2
+
 * Fri Apr 10 2015 mosquito <sensor.wen@gmail.com> - 1.5.1-1
 - update version to 1.5.1
 
