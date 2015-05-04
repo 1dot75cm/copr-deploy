@@ -15,7 +15,7 @@
     register: vm_ip
 
   - name: terminate it
-    shell: docker stop -t 2 {{copr_task.vm_name}} && docker rm {{copr_task.vm_name}}
+    shell: docker stop -t 2 {{copr_task.vm_name}} && docker rm -v {{copr_task.vm_name}}
 
   - name: delete web route
     shell: ssh copr@{{Web_ip}} -p {{Web_port}} "sudo route del -host {{ vm_ip.stdout }} gw {{ Build_ip }}"
